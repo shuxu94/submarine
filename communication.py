@@ -10,6 +10,9 @@ import time
 
 class PIsocket(socket.socket):
 	pass
+	
+class Compsocket(socket.socket):
+	pass
 
 	
 class Serial(object):

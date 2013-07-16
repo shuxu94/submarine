@@ -1,10 +1,7 @@
-import communication
-import sensor
-import commands
-import serial
-import time
-import devicepath
+from submarine.communication import *
+from submarine.sumbmarine import *
 
 
-test serial = communication.Serial(Shusmac1, 9600, 2):
-	print getMessage
+testserial = communication.Serial(Shusmac1, 9600, 2)
+while true:
+		print serial.getMessage

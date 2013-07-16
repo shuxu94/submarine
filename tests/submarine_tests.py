@@ -1,6 +1,4 @@
 from nose.tools import *
-from submarine import *
+from submarine.submarine import *
 
-
-def testsub():
 	

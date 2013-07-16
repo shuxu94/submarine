@@ -1,4 +1,4 @@
 submarine
 =========
 
-library for Rutgers AUV
+API for Rutger AUV 'Neptune'

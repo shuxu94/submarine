@@ -42,3 +42,10 @@ class Submarine(object):
 		self.rudderSetting = rudderSetting
 		
 		self.sendCommand()
+
+def main():
+	pass
+
+
+if __name__ = "__main__":
+	main()

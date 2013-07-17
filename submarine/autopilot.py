@@ -25,3 +25,10 @@ class Autopilot(object):
 	def setBase(self, x, y):
 		self.basex = x
 		self.basey = y
+
+def main():
+	pass
+
+
+if __name__ = "__main__":
+	main()

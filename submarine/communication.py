@@ -6,7 +6,6 @@ import time
 #  Sensor data coming in in the following form:
 #  x-coordinate, y-coordinate, compassx, compassy, temperature
 
-
 class PIsocket(socket.socket):
 	pass
 	
@@ -30,3 +29,9 @@ class Serial(object):
 
 	def readline(self):
 		return self.Serial.readline() #chang it to a serial subclass
+
+def main():
+	pass
+
+if __name__ = "__main__":
+	main()

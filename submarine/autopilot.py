@@ -33,6 +33,7 @@ class Autopilot(object):
 	def setBase(self, x, y):
 		self.basex = x
 		self.basey = y
+	def distanceToDes
 
 def main():
 	pass

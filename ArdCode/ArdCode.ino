@@ -110,21 +110,42 @@ void readfromPI()
        motor_pwm = motor_pwm_old;
      }
      else{
-       motor_pwm_old = motor_pwm;
+       if(motor_pwm <= MOTORMIN){
+         motor_pwm = MOTORMIN;
+       }
+       
+       if(motor_pwm >= MOTORMAX){
+         motor_pwm = MOTORMAX;
+       }
+         motor_pwm_old = motor_pwm;
      }
      
      if(elevator_pwm == 0){
        elevator_pwm = elevator_pwm_old;
      }
      else{
-       elevator_pwm_old = elevator_pwm;
+       if(elevator_pwm <= ELEVATORMIN){
+         elevator_pwm = ELEVATORMIN;
+       }
+       
+       if(elevator_pwm >= ELEVATORMAX){
+         elevator_pwm = ELEVATORMAX;
+       }
+         elevator_pwm_old = elevator_pwm;
      }
      
      if(rudder_pwm == 0){
        rudder_pwm = rudder_pwm_old;
      }
      else{
-       rudder_pwm_old = rudder_pwm;
+       if(rudder_pwm <= RUDDERMIN){
+         rudder_pwm = RUDDERMIN;
+       }
+       
+       if(rudder_pwm >= RUDDERMAX){
+         rudder_pwm = RUDDERMAX;
+       }
+         rudder_pwm_old = rudder_pwm;
      }
      
 }

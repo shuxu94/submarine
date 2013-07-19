@@ -1,4 +1,5 @@
 import serial
+import threading
 import socket
 import thread
 import sensor
@@ -8,6 +9,8 @@ import sys
 
 #  Sensor data coming in in the following form:
 #  x-coordinate, y-coordinate, compassx, compassy, temperature
+class ListeningThread(threading.Thread):
+	pass
 
 class PIsocket(socket.socket): #  PIsocket is the server side 
 							   #  User datagram 
@@ -21,23 +24,20 @@ class PIsocket(socket.socket): #  PIsocket is the server side
 			print 'socket error'
 			sys.exit()
 	def sendMessage(self, message):
-		s.sendto(message, (self.ip, self.port))
+		self.sendto(message, (self.ip, self.port))
 	def getMessage(self):
 		self.data, self.addr = self.recvfrom(1024)
+		return self.data
 		
 		
 class Compsocket(socket.socket):
 	def __init__(self, ip, port):
-		super(PIsocket, self).__init__(socket.AF_INET, socket.SOCK_DGRAM)
+		super(Compsocket, self).__init__(socket.AF_INET, socket.SOCK_DGRAM)
 		self.ip = ip
 		self.port = port
-		try:
-			self.bind((self.ip, self.port))
-		except socket.error, msg:
-			print 'socket error'
-			sys.exit()
+
 	def sendMessage(self, message):
-		s.sendto(message, (self.ip, self.port))
+		self.sendto(message, (self.ip, self.port))
 
 	def getMessage(self):
 		self.data, self.addr = self.recvfrom(1024)

@@ -10,7 +10,7 @@
 //#define MOTORMAX 1900 //max backward
 #define MOTORMID 1475 //stopped
 //#define MOTORMIN 1050 //max forward
-#define MOTORMAXCHANGE 2 //max angle change per cycle
+#define MOTORMAXCHANGE 75 //max pwm change per cycle
 
 #define RUDDERMAX 2200 //right
 #define RUDDERMID 1400 //straight
@@ -49,24 +49,26 @@ void setup(){
 }
 
 
-void loop() 
-{ 
-      serialDataIn = "";
-      readfromPI();
+void loop(){ 
+    serialDataIn = "";
+    readfromPI();
       
     Serial.println(motor_pwm);
     Serial.println(elevator_pwm);
     Serial.println(rudder_pwm);
     delay(3000);
     
-    Motor.write(motor_pwm);              // tell servo to go to position in variable 'pos' 
+    motorwrite(motor_pwm, motor_pwm_old);
+//    Motor.write(motor_pwm);              // tell servo to go to position in variable 'pwm' 
     Elevator.write(elevator_pwm);
     Rudder.write(rudder_pwm);
 
+    motor_pwm_old = motor_pwm;
+    elevator_pwm_old = elevator_pwm;
+    rudder_pwm_old = rudder_pwm;
 } 
 
-void readfromPI()
-{
+void readfromPI(){
 /*    inbyte = Serial.read();
     if(inbyte >= '0' & inbyte <= '9')
       serialDataIn += char(inbyte);
@@ -106,6 +108,7 @@ void readfromPI()
      
      
      // if there is no new input (aka inputs are 0), then go back to old input
+     // if pwm is less than min or more than max, value will be changed to either min or max
      if(motor_pwm == 0){
        motor_pwm = motor_pwm_old;
      }
@@ -117,7 +120,7 @@ void readfromPI()
        if(motor_pwm >= MOTORMAX){
          motor_pwm = MOTORMAX;
        }
-         motor_pwm_old = motor_pwm;
+//         motor_pwm_old = motor_pwm;
      }
      
      if(elevator_pwm == 0){
@@ -131,7 +134,7 @@ void readfromPI()
        if(elevator_pwm >= ELEVATORMAX){
          elevator_pwm = ELEVATORMAX;
        }
-         elevator_pwm_old = elevator_pwm;
+//         elevator_pwm_old = elevator_pwm;
      }
      
      if(rudder_pwm == 0){
@@ -145,9 +148,32 @@ void readfromPI()
        if(rudder_pwm >= RUDDERMAX){
          rudder_pwm = RUDDERMAX;
        }
-         rudder_pwm_old = rudder_pwm;
+//         rudder_pwm_old = rudder_pwm;
      }
      
 }
 
-
+void motorwrite(int new_pwm, int old_pwm){
+  int pwm = new_pwm;
+  if (new_pwm > old_pwm){
+    while (pwm > old_pwm){
+      if ((pwm - old_pwm) < 75){
+        Motor.write(new_pwm);
+      }
+      pwm -= 75;
+      Motor.write(pwm);
+      delay(50);
+    }
+  }
+  
+  if (new_pwm < old_pwm){
+    while (pwm < old_pwm){
+      if ((old_pwm - pwm) < 75){
+        Motor.write(new_pwm);
+      }
+      pwm += 75;
+      Motor.write(pwm);
+      delay(50);
+    }
+  }
+}

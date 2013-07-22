@@ -2,7 +2,7 @@ import communication
 import devicepath
 import time
 
-testserial = communication.Serial(devicepath.Shusmac1, 9600, 2)
+testserial = communication.Serial(devicepath.Pi, 9600, 2)
 while 1:
 	time.sleep(2)
 	msg = '1600,1600,1600'

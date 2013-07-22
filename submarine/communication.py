@@ -23,11 +23,19 @@ class PIsocket(socket.socket): #  PIsocket is the server side
 		except socket.error, msg:
 			print 'socket error'
 			sys.exit()
+	def start(self):
+		while 1:
+			garbage, self.addr = self.recvfrom(1024)
+			if len(self.addr) > 0:
+				self.sendMessage('Got addr')
+				break
 	def sendMessage(self, message):
-		self.sendto(message, (self.ip, self.port))
+		self.sendto(message, self.addr)
 	def getMessage(self):
 		self.data, self.addr = self.recvfrom(1024)
 		return self.data
+	def getAddress(self):
+		return self.addr
 		
 		
 class Compsocket(socket.socket):
@@ -35,12 +43,20 @@ class Compsocket(socket.socket):
 		super(Compsocket, self).__init__(socket.AF_INET, socket.SOCK_DGRAM)
 		self.ip = ip
 		self.port = port
+		
+	def start(self):
+		while 1:
+			self.sendto('',(self.ip, self.port))
+			self.getMessage()
+			if len(self.data) > 0:
+				break
 
 	def sendMessage(self, message):
 		self.sendto(message, (self.ip, self.port))
 
 	def getMessage(self):
 		self.data, self.addr = self.recvfrom(1024)
+		return self.data
 		
 class Serial(object):
 	def __init__(self, devicepath, brate, tout):

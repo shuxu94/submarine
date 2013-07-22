@@ -12,13 +12,16 @@
 //#define MOTORMIN 1050 //max forward
 #define MOTORMAXCHANGE 75 //max pwm change per cycle
 
-#define RUDDERMAX 2200 //right
-#define RUDDERMID 1400 //straight
-#define RUDDERMIN 900 //left
 
 #define ELEVATORMAX 2150
 #define ELEVATORMID 1515
 #define ELEVATORMIN 880
+
+
+#define RUDDERMAX 2200 //right
+#define RUDDERMID 1400 //straight
+#define RUDDERMIN 900 //left
+
 
 String serialDataIn;
 char serialInput;
@@ -52,14 +55,14 @@ void setup(){
 void loop(){ 
     serialDataIn = "";
     readfromPI();
-      
+/*      
     Serial.println(motor_pwm);
     Serial.println(elevator_pwm);
     Serial.println(rudder_pwm);
     delay(3000);
-    
-    motorwrite(motor_pwm, motor_pwm_old);
-//    Motor.write(motor_pwm);              // tell servo to go to position in variable 'pwm' 
+*/    
+//    motorwrite(motor_pwm, motor_pwm_old);
+    Motor.write(motor_pwm);              // tell servo to go to position in variable 'pwm' 
     Elevator.write(elevator_pwm);
     Rudder.write(rudder_pwm);
 
@@ -152,7 +155,7 @@ void readfromPI(){
      }
      
 }
-
+/*
 void motorwrite(int new_pwm, int old_pwm){
   int pwm = new_pwm;
   if (new_pwm > old_pwm){
@@ -177,3 +180,4 @@ void motorwrite(int new_pwm, int old_pwm){
     }
   }
 }
+*/

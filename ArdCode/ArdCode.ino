@@ -59,8 +59,9 @@ void loop(){
     Serial.println(motor_pwm);
     Serial.println(elevator_pwm);
     Serial.println(rudder_pwm);
-    delay(3000);
-*/    
+*/
+    delay(100);
+    
 //    motorwrite(motor_pwm, motor_pwm_old);
     Motor.write(motor_pwm);              // tell servo to go to position in variable 'pwm' 
     Elevator.write(elevator_pwm);
@@ -92,6 +93,7 @@ void readfromPI(){
        serialInput = Serial.read();
        serialDataIn.concat(serialInput);
     }
+    Serial.println(serialDataIn);
 
     // printing out the string that has been received from serial in the format #,#,#
 /*    if (serialDataIn != ""){
@@ -123,6 +125,7 @@ void readfromPI(){
        if(motor_pwm >= MOTORMAX){
          motor_pwm = MOTORMAX;
        }
+
 //         motor_pwm_old = motor_pwm;
      }
      

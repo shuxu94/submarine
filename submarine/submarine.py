@@ -13,7 +13,7 @@ class Submarine(object):
 		self.sensor = sensor #  sensor.sensor object 
 				
 	def sendCommand(self):
-		self.controlmessage = "%d, %d, %d\n" % (
+		self.controlmessage = "%d,%d,%d\n" % (
 												self.motorsetting,
 												self.elevatorsetting,
 												self.ruddersetting)

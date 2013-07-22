@@ -1,7 +1,7 @@
 import communication
 import time
-#host = '192.168.234.234'
-host = 'localhost'
+host = '192.168.234.234'
+#host = 'localhost'
 port = 8888
 
 socket = communication.Compsocket(host,port)

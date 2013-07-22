@@ -6,4 +6,7 @@ port = 8888
 socket = communication.PIsocket(host, port)
 
 while 1:
-	print socket.getMessage()
+	time.sleep(2)
+	msg = str(time.time())
+	print 'sending: ' + msg
+	socket.sendMessage(msg)

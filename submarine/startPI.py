@@ -1,4 +1,5 @@
 import communication
+import time
 
 host = ''
 port = 8888

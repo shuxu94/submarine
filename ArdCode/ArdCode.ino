@@ -12,15 +12,17 @@
 //#define MOTORMIN 1050 //max forward
 #define MOTORMAXCHANGE 75 //max pwm change per cycle
 
-
 #define ELEVATORMAX 2150
 #define ELEVATORMID 1515
 #define ELEVATORMIN 880
 
-
 #define RUDDERMAX 2200 //right
 #define RUDDERMID 1400 //straight
 #define RUDDERMIN 900 //left
+
+#define MAXANGLE 180
+#define MIDANGLE 90
+#define MINANGLE 0
 
 
 String serialDataIn;
@@ -31,9 +33,9 @@ char serialInput;
 int motor_pwm;
 int elevator_pwm;
 int rudder_pwm;
-int motor_pwm_old = MOTORMID;
-int elevator_pwm_old = ELEVATORMID;
-int rudder_pwm_old = RUDDERMID;
+int motor_pwm_old = MIDANGLE;
+int elevator_pwm_old = MIDANGLE;
+int rudder_pwm_old = MIDANGLE;
 //int inbyte;
 
 Servo Motor;
@@ -118,12 +120,12 @@ void readfromPI(){
        motor_pwm = motor_pwm_old;
      }
      else{
-       if(motor_pwm <= MOTORMIN){
-         motor_pwm = MOTORMIN;
+       if(motor_pwm <= MINANGLE){
+         motor_pwm = MINANGLE;
        }
        
-       if(motor_pwm >= MOTORMAX){
-         motor_pwm = MOTORMAX;
+       if(motor_pwm >= MAXANGLE){
+         motor_pwm = MAXANGLE;
        }
 
 //         motor_pwm_old = motor_pwm;
@@ -133,12 +135,12 @@ void readfromPI(){
        elevator_pwm = elevator_pwm_old;
      }
      else{
-       if(elevator_pwm <= ELEVATORMIN){
-         elevator_pwm = ELEVATORMIN;
+       if(elevator_pwm <= MINANGLE){
+         elevator_pwm = MINANGLE;
        }
        
-       if(elevator_pwm >= ELEVATORMAX){
-         elevator_pwm = ELEVATORMAX;
+       if(elevator_pwm >= MAXANGLE){
+         elevator_pwm = MAXANGLE;
        }
 //         elevator_pwm_old = elevator_pwm;
      }
@@ -147,12 +149,12 @@ void readfromPI(){
        rudder_pwm = rudder_pwm_old;
      }
      else{
-       if(rudder_pwm <= RUDDERMIN){
-         rudder_pwm = RUDDERMIN;
+       if(rudder_pwm <= MINANGLE){
+         rudder_pwm = MINANGLE;
        }
        
-       if(rudder_pwm >= RUDDERMAX){
-         rudder_pwm = RUDDERMAX;
+       if(rudder_pwm >= MAXANGLE){
+         rudder_pwm = MAXANGLE;
        }
 //         rudder_pwm_old = rudder_pwm;
      }

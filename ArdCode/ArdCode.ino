@@ -1,24 +1,35 @@
 #include <Servo.h> // motor control library
+#include <nmea.h> // GPS
+#include <Wire.h> // compass
+#include <OneWire.h> // temperature sensor
+#include <stdlib.h>
+#include <math.h>
+
+NMEA GPS(GPRMC);
+double GPSx,GPSy,Temp,Heading;
+char compXStr [100];
+char compYStr [100];
+char GPSxstr [100];
+char GPSystr [100];
+char Tempstr [100];
+char Headingstr [100];
+int CompxMax,CompyMax,CompxMin,CompyMin;
+
+// TEMPERATURE SENSOR SETUP CODE
+int DS18S20_Pin = 2; //DS18S20 Signal pin on digital 2
+OneWire ds(DS18S20_Pin); // on digital pin 2
+
+//EXPENSIVE  SETUP
+int compassAddress = 0x42 >> 1;
+int reading = 0; 
+
+int calibrating = 0;
+int GetGPS = 0;
 
 #define COMPXMIN -490.0// used to calibrate magnetometer readings into heading
 #define COMPXMAX 55.0
 #define COMPYMIN -328.0
 #define COMPYMAX 140.0
-
-#define MOTORMAX 1810 //less than max backward
-#define MOTORMIN 1140 //less than max forward
-//#define MOTORMAX 1900 //max backward
-#define MOTORMID 1475 //stopped
-//#define MOTORMIN 1050 //max forward
-#define MOTORMAXCHANGE 75 //max pwm change per cycle
-
-#define ELEVATORMAX 2150
-#define ELEVATORMID 1515
-#define ELEVATORMIN 880
-
-#define RUDDERMAX 2200 //right
-#define RUDDERMID 1400 //straight
-#define RUDDERMIN 900 //left
 
 #define MAXANGLE 180
 #define MIDANGLE 90
@@ -30,12 +41,12 @@ char serialInput;
 
 //String data[3];
 //int counter;
-int motor_pwm;
-int elevator_pwm;
-int rudder_pwm;
-int motor_pwm_old = MIDANGLE;
-int elevator_pwm_old = MIDANGLE;
-int rudder_pwm_old = MIDANGLE;
+int motor_angle;
+int elevator_angle;
+int rudder_angle;
+int motor_angle_old = MIDANGLE;
+int elevator_angle_old = MIDANGLE;
+int rudder_angle_old = MIDANGLE;
 //int inbyte;
 
 Servo Motor;
@@ -44,7 +55,8 @@ Servo Elevator;
 
 
 void setup(){
-  Serial.begin(9600);
+  Serial.begin(9600); // PI
+  Serial2.begin(4800); //gps
 //  counter = 0;
   serialDataIn = "";
   
@@ -55,23 +67,36 @@ void setup(){
 
 
 void loop(){ 
-    serialDataIn = "";
-    readfromPI();
+  serialDataIn = "";
+  readfromPI();
 /*      
-    Serial.println(motor_pwm);
-    Serial.println(elevator_pwm);
-    Serial.println(rudder_pwm);
+  Serial.println(motor_angle);
+  Serial.println(elevator_angle);
+  Serial.println(rudder_angle);
 */
-    delay(100);
+  delay(100);
     
-//    motorwrite(motor_pwm, motor_pwm_old);
-    Motor.write(motor_pwm);              // tell servo to go to position in variable 'pwm' 
-    Elevator.write(elevator_pwm);
-    Rudder.write(rudder_pwm);
+//  motorwrite(motor_angle, motor_angle_old);
+  Motor.write(motor_angle);              // tell servo to go to position in variable 'pwm' 
+  Elevator.write(elevator_angle);
+  Rudder.write(rudder_angle);
 
-    motor_pwm_old = motor_pwm;
-    elevator_pwm_old = elevator_pwm;
-    rudder_pwm_old = rudder_pwm;
+  motor_angle_old = motor_angle;
+  elevator_angle_old = elevator_angle;
+  rudder_angle_old = rudder_angle;
+/*    
+  while(1){
+    if(readGPS()){
+      break;
+    }    
+  }
+//  //   newHeading();
+  getTemp();
+  sendInfo();
+//  unsigned long time=millis()-currtime;
+*/
+
+  if (Serial2.available()) Serial.write(Serial2.read());
 } 
 
 void readfromPI(){
@@ -95,7 +120,7 @@ void readfromPI(){
        serialInput = Serial.read();
        serialDataIn.concat(serialInput);
     }
-    Serial.println(serialDataIn);
+//    Serial.println(serialDataIn);
 
     // printing out the string that has been received from serial in the format #,#,#
 /*    if (serialDataIn != ""){
@@ -105,85 +130,201 @@ void readfromPI(){
     int commaIndex = serialDataIn.indexOf(',');
     int secondCommaIndex = serialDataIn.indexOf(',', commaIndex+1);
     
-    String motorpwm = serialDataIn.substring(0, commaIndex);
-    String elevatorpwm = serialDataIn.substring(commaIndex+1, secondCommaIndex);
-    String rudderpwm = serialDataIn.substring(secondCommaIndex+1);
+    String motorangle = serialDataIn.substring(0, commaIndex);
+    String elevatorangle = serialDataIn.substring(commaIndex+1, secondCommaIndex);
+    String rudderangle = serialDataIn.substring(secondCommaIndex+1);
     
-     motor_pwm= motorpwm.toInt();
-     elevator_pwm= elevatorpwm.toInt();
-     rudder_pwm = rudderpwm.toInt();     
+     motor_angle= motorangle.toInt();
+     elevator_angle= elevatorangle.toInt();
+     rudder_angle = rudderangle.toInt();     
      
      
      // if there is no new input (aka inputs are 0), then go back to old input
      // if pwm is less than min or more than max, value will be changed to either min or max
-     if(motor_pwm == 0){
-       motor_pwm = motor_pwm_old;
+     if(motor_angle == 0){
+       motor_angle = motor_angle_old;
      }
      else{
-       if(motor_pwm <= MINANGLE){
-         motor_pwm = MINANGLE;
+       if(motor_angle <= MINANGLE){
+         motor_angle = MINANGLE;
        }
        
-       if(motor_pwm >= MAXANGLE){
-         motor_pwm = MAXANGLE;
+       if(motor_angle >= MAXANGLE){
+         motor_angle = MAXANGLE;
        }
 
 //         motor_pwm_old = motor_pwm;
      }
      
-     if(elevator_pwm == 0){
-       elevator_pwm = elevator_pwm_old;
+     if(elevator_angle == 0){
+       elevator_angle = elevator_angle_old;
      }
      else{
-       if(elevator_pwm <= MINANGLE){
-         elevator_pwm = MINANGLE;
+       if(elevator_angle <= MINANGLE){
+         elevator_angle = MINANGLE;
        }
        
-       if(elevator_pwm >= MAXANGLE){
-         elevator_pwm = MAXANGLE;
+       if(elevator_angle >= MAXANGLE){
+         elevator_angle = MAXANGLE;
        }
 //         elevator_pwm_old = elevator_pwm;
      }
      
-     if(rudder_pwm == 0){
-       rudder_pwm = rudder_pwm_old;
+     if(rudder_angle == 0){
+       rudder_angle = rudder_angle_old;
      }
      else{
-       if(rudder_pwm <= MINANGLE){
-         rudder_pwm = MINANGLE;
+       if(rudder_angle <= MINANGLE){
+         rudder_angle = MINANGLE;
        }
        
-       if(rudder_pwm >= MAXANGLE){
-         rudder_pwm = MAXANGLE;
+       if(rudder_angle >= MAXANGLE){
+         rudder_angle = MAXANGLE;
        }
 //         rudder_pwm_old = rudder_pwm;
      }
      
 }
 /*
-void motorwrite(int new_pwm, int old_pwm){
-  int pwm = new_pwm;
-  if (new_pwm > old_pwm){
-    while (pwm > old_pwm){
-      if ((pwm - old_pwm) < 75){
-        Motor.write(new_pwm);
+void motorwrite(int new_angle, int old_angle){
+  int angle = new_angle;
+  if (new_angle > old_angle){
+    while (angle > old_angle){
+      if ((angle - old_angle) < 5){
+        Motor.write(new_angle);
+        return;
       }
-      pwm -= 75;
-      Motor.write(pwm);
-      delay(50);
+      else{
+        angle -= 5;
+        Motor.write(angle);
+      }
+      delay(500);
     }
   }
   
-  if (new_pwm < old_pwm){
-    while (pwm < old_pwm){
-      if ((old_pwm - pwm) < 75){
-        Motor.write(new_pwm);
+  if (new_angle < old_angle){
+    while (angle < old_angle){
+      if ((old_angle - angle) < 5){
+        Motor.write(new_angle);
+        return;
       }
-      pwm += 75;
-      Motor.write(pwm);
-      delay(50);
+      else{
+        angle += 5;
+        Motor.write(angle);
+      }
+      delay(500);
     }
   }
 }
 */
-//
+/*
+int readGPS(){
+  if(Serial2.available() > 0){
+    char c = Serial2.read();
+    if(GPS.decode(c)){
+      if(GPS.gprmc_status()=='A'){
+        GPSx=double(GPS.gprmc_latitude());
+        GPSy=double(GPS.gprmc_longitude());
+        Heading=double(GPS.gprmc_course())*PI/180;
+        dtostrf(GPSx,20,10,GPSxstr);
+        dtostrf(GPSy,20,10,GPSystr);
+        dtostrf(Heading,20,10,Headingstr);
+      }
+      return 1;
+    }
+  }
+  return 0;
+}
+
+int readCompass(int outputMode){
+  byte magData[2];
+  switch (outputMode)
+  {
+  case 0:
+    Wire.beginTransmission(compassAddress);
+    Wire.write(0x47);               // Write to RAM command
+    Wire.write(0x4E);               // Output Mode control byte address
+    Wire.write(0x00);               // 0x00 for Heading mode
+    Wire.endTransmission();
+    break;
+  case 1:
+    Wire.beginTransmission(compassAddress);
+    Wire.write(0x47);               // Write to RAM command
+    Wire.write(0x4E);               // Output Mode control byte address
+    Wire.write(0x03);               // 0x03 for Magnetometer X mode
+    Wire.endTransmission();
+    break;
+  case 2:
+    Wire.beginTransmission(compassAddress);
+    Wire.write(0x47);               // Write to RAM command
+    Wire.write(0x4E);               // Output Mode control byte address
+    Wire.write(0x04);               // 0x04 for Magnetometer Y mode
+    Wire.endTransmission();
+    break;
+  default:
+    Wire.beginTransmission(compassAddress);
+    Wire.write(0x47);               // Write to RAM command
+    Wire.write(0x4E);               // Output Mode control byte address
+    Wire.write(0x00);               // default to Heading mode 
+    Wire.endTransmission();
+  }
+  delayMicroseconds(100);        // RAM write needs 70 microseconds to respond
+
+  Wire.beginTransmission(compassAddress);
+  Wire.write("A");                     // The "Get Data" command
+  Wire.endTransmission();
+  delay(10);                    // Get Data needs 6 milliseconds to respond
+
+  Wire.requestFrom(compassAddress, 2);  // Request the 2 byte data (MSB comes first)
+  int i = 0;
+  while(Wire.available() && i < 2)
+  { 
+    magData[i] = Wire.read();
+    i++;
+  }
+
+int  magReading = magData[0]*256 + magData[1];
+return magReading;
+}
+
+int getTemp(){ //returns the temperature from one DS18S20 in DEG Celsius
+  byte data[12];
+  byte addr[8];
+  if ( !ds.search(addr)) { //no more sensors on chain, reset search
+    ds.reset_search();
+    return -1000;
+  }
+  if ( OneWire::crc8( addr, 7) != addr[7]) {
+    Serial.println("CRC is not valid!");
+    return -1000;
+  }
+  if ( addr[0] != 0x10 && addr[0] != 0x28) {
+    Serial.print("Device is not recognized");
+    return -1000;
+  }
+  ds.reset();
+  ds.select(addr);
+  ds.write(0x44,1); // start conversion, with parasite power on at the end
+  byte present = ds.reset();
+  ds.select(addr);  
+  ds.write(0xBE); // Read Scratchpad
+  for (int i = 0; i < 9; i++) { // we need 9 bytes
+    data[i] = ds.read();
+  }
+  ds.reset_search();
+  byte MSB = data[1];
+  byte LSB = data[0];
+  float tempRead = ((MSB << 8) | LSB); //using two's compliment
+  float TemperatureSum = tempRead / 16;
+  Temp=double(TemperatureSum);
+  dtostrf(Temp,8,5,Tempstr);
+  return 0;
+}
+
+int sendInfo(){ // OUTPUTS: 0=GPSx, 1=GPSy, 2=compx, 3=compy, 4=compz, 5=temp
+  char sendstr[1000];
+//  sprintf(sendstr,"%s %s %s %s %s",GPSxstr,GPSystr,compXStr,compYStr,Tempstr);
+  sprintf(sendstr,"%s",Tempstr);
+  Serial.println(sendstr);
+}
+*/

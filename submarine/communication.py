@@ -10,7 +10,13 @@ import sys
 #  Sensor data coming in in the following form:
 #  x-coordinate, y-coordinate, compassx, compassy, temperature
 class ListeningThread(threading.Thread):
-	pass
+	def __init__(self, Commsocket):
+		threading.Thread.__init__(self)
+		self.socket = Commsocket
+	def run(self):
+		while 1:
+			print self.socket.getMessage()
+	
 
 class PIsocket(socket.socket): #  PIsocket is the server side 
 							   #  User datagram 
@@ -23,12 +29,16 @@ class PIsocket(socket.socket): #  PIsocket is the server side
 		except socket.error, msg:
 			print 'socket error'
 			sys.exit()
-	def start(self):
+	def start(self):#   this has to start before compsocket
 		while 1:
-			garbage, self.addr = self.recvfrom(1024)
-			if len(self.addr) > 0:
-				self.sendMessage('Got addr')
-				break
+			self.garbage, self.addr = self.recvfrom(1024)
+			print 'recieved inside() ' + self.garbage
+			if len(self.garbage) > 0:
+				self.garbage = None
+ 				self.sendMessage('msg by pi')
+ 				print 'confirmed break'
+ 				break
+
 	def sendMessage(self, message):
 		self.sendto(message, self.addr)
 	def getMessage(self):
@@ -46,9 +56,12 @@ class Compsocket(socket.socket):
 		
 	def start(self):
 		while 1:
-			self.sendto('',(self.ip, self.port))
-			self.getMessage()
-			if len(self.data) > 0:
+			self.sendto('msg by comp',(self.ip, self.port))
+			self.garbage, self.addr = self.recvfrom(1024)
+			print 'recieved inside start() ' + self.garbage
+			if len(self.garbage) > 0:
+				self.garbage = None
+				print 'confirmed break'
 				break
 
 	def sendMessage(self, message):
@@ -57,6 +70,8 @@ class Compsocket(socket.socket):
 	def getMessage(self):
 		self.data, self.addr = self.recvfrom(1024)
 		return self.data
+	def getAddress(self):
+		return self.addr
 		
 class Serial(object):
 	def __init__(self, devicepath, brate, tout):

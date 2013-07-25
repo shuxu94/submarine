@@ -13,9 +13,22 @@ class ListeningThread(threading.Thread):
 	def __init__(self, Commsocket):
 		threading.Thread.__init__(self)
 		self.socket = Commsocket
+		self.reciever = []
 	def run(self):
 		while 1:
-			print self.socket.getMessage()
+			self.msg = self.socket.getMessage()
+ 			self.send(self.msg)
+ 			
+ 	def addReciever(self, reciever):
+ 		self.reciever.append(reciever)
+
+ 	def send(self, message):
+ 		for i in self.reciever:
+ 			i.message = message
+		
+class Reciever(object):
+	def __init__(self):
+		self.message = None
 	
 
 class PIsocket(socket.socket): #  PIsocket is the server side 
@@ -95,7 +108,7 @@ class Serial(object):
 	def sendMessage(self, message):
 		self.Serial.write(message)
 
-	def readline(self):
+	def getMessage(self):
 		return self.Serial.readline() #chang it to a serial subclass
 
 def main(): #  test client

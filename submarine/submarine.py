@@ -8,9 +8,9 @@ import sensor
 baudrate = 9600
 timeout = 2
 class Submarine(object):
-	def __init__(self, serial, sensor):
+	def __init__(self, serial):
 		self.serial = serial #  communication.serial object
-		self.sensor = sensor #  sensor.sensor object 
+		self.sensor = sensor.Sensors(self.serial) #  sensor.sensor object 
 				
 	def sendCommand(self):
 		self.controlmessage = "%d,%d,%d\n" % (

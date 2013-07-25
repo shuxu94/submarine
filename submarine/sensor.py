@@ -2,9 +2,11 @@ import communication
 
 
 class Sensors(object):
-	def __init__(self, submarine): #  class submarine as an argument
-		self.submarine = submarine
-		self.data = self.submarine.ardSerial.getMessage().split
+	def __init__(self, serial): #  class submarine as an argument
+		self.serial = serial
+
+	def getData(self):
+		self.data = self.serial.getMessage().split
 
 		self.currentLocation = GPScoord(float(self.data[0]), 
 										float(self.data[1]))

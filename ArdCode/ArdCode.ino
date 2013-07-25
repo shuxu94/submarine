@@ -69,11 +69,11 @@ void setup(){
 void loop(){ 
   serialDataIn = "";
   readfromPI();
-/*      
+      
   Serial.println(motor_angle);
   Serial.println(elevator_angle);
   Serial.println(rudder_angle);
-*/
+
   delay(100);
     
 //  motorwrite(motor_angle, motor_angle_old);
@@ -84,19 +84,18 @@ void loop(){
   motor_angle_old = motor_angle;
   elevator_angle_old = elevator_angle;
   rudder_angle_old = rudder_angle;
-/*    
+/*   
   while(1){
     if(readGPS()){
       break;
     }    
   }
-//  //   newHeading();
+*/
   getTemp();
   sendInfo();
-//  unsigned long time=millis()-currtime;
-*/
 
-  if (Serial2.available()) Serial.write(Serial2.read());
+
+//  if (Serial2.available()) Serial.write(Serial2.read());
 } 
 
 void readfromPI(){
@@ -147,13 +146,10 @@ void readfromPI(){
      else{
        if(motor_angle <= MINANGLE){
          motor_angle = MINANGLE;
-       }
-       
+       }       
        if(motor_angle >= MAXANGLE){
          motor_angle = MAXANGLE;
        }
-
-//         motor_pwm_old = motor_pwm;
      }
      
      if(elevator_angle == 0){
@@ -163,11 +159,9 @@ void readfromPI(){
        if(elevator_angle <= MINANGLE){
          elevator_angle = MINANGLE;
        }
-       
        if(elevator_angle >= MAXANGLE){
          elevator_angle = MAXANGLE;
        }
-//         elevator_pwm_old = elevator_pwm;
      }
      
      if(rudder_angle == 0){
@@ -177,15 +171,13 @@ void readfromPI(){
        if(rudder_angle <= MINANGLE){
          rudder_angle = MINANGLE;
        }
-       
        if(rudder_angle >= MAXANGLE){
          rudder_angle = MAXANGLE;
        }
-//         rudder_pwm_old = rudder_pwm;
      }
      
 }
-/*
+
 void motorwrite(int new_angle, int old_angle){
   int angle = new_angle;
   if (new_angle > old_angle){
@@ -216,8 +208,7 @@ void motorwrite(int new_angle, int old_angle){
     }
   }
 }
-*/
-/*
+
 int readGPS(){
   if(Serial2.available() > 0){
     char c = Serial2.read();
@@ -323,8 +314,7 @@ int getTemp(){ //returns the temperature from one DS18S20 in DEG Celsius
 
 int sendInfo(){ // OUTPUTS: 0=GPSx, 1=GPSy, 2=compx, 3=compy, 4=compz, 5=temp
   char sendstr[1000];
-//  sprintf(sendstr,"%s %s %s %s %s",GPSxstr,GPSystr,compXStr,compYStr,Tempstr);
-  sprintf(sendstr,"%s",Tempstr);
+  sprintf(sendstr,"%s %s %s %s %s",GPSxstr,GPSystr,compXStr,compYStr,Tempstr);
+//  sprintf(sendstr,"%s",Tempstr);
   Serial.println(sendstr);
 }
-*/

@@ -9,7 +9,7 @@ import sys
 
 #  Sensor data coming in in the following form:
 #  x-coordinate, y-coordinate, compassx, compassy, temperature
-class ListeningThread(threading.Thread):
+class ListeningThread(threading.Thread):#  This is used to listen for messages
 	def __init__(self, Commsocket):
 		threading.Thread.__init__(self)
 		self.socket = Commsocket
@@ -26,13 +26,13 @@ class ListeningThread(threading.Thread):
  		for i in self.reciever:
  			i.message = message
 		
-class Reciever(object):
-	def __init__(self):
+class Reciever(object):#  this is used to read from ListeningThread
+	def __init__(self):#  use either this object or an inheritance of it
 		self.message = None
 	
 
-class PIsocket(socket.socket): #  PIsocket is the server side 
-							   #  User datagram 
+class PIsocket(socket.socket):#  PIsocket is the server side 
+							  #  User datagram 
 	def __init__(self, ip, port):
 		super(PIsocket, self).__init__(socket.AF_INET, socket.SOCK_DGRAM)
 		self.ip = ip

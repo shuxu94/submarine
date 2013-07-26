@@ -318,3 +318,5 @@ int sendInfo(){ // OUTPUTS: 0=GPSx, 1=GPSy, 2=compx, 3=compy, 4=compz, 5=temp
 //  sprintf(sendstr,"%s",Tempstr);
   Serial.println(sendstr);
 }
+
+//askdjfasjfbasdjhsadjfaskdf

@@ -33,6 +33,7 @@ class Reciever(object):#  this is used to read from ListeningThread
 
 class PIsocket(socket.socket):#  PIsocket is the server side 
 							  #  User datagram 
+	'''Socket to be used on PI, UDP server'''
 	def __init__(self, ip, port):
 		super(PIsocket, self).__init__(socket.AF_INET, socket.SOCK_DGRAM)
 		self.ip = ip
@@ -62,6 +63,7 @@ class PIsocket(socket.socket):#  PIsocket is the server side
 		
 		
 class Compsocket(socket.socket):
+	'''Socket to be used on the Computer; UDP client'''
 	def __init__(self, ip, port):
 		super(Compsocket, self).__init__(socket.AF_INET, socket.SOCK_DGRAM)
 		self.ip = ip

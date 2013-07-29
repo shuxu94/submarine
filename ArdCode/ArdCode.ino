@@ -69,12 +69,12 @@ void setup(){
 void loop(){ 
   serialDataIn = "";
   readfromPI();
-/*      
+      
   Serial.println(motor_angle);
   Serial.println(elevator_angle);
   Serial.println(rudder_angle);
-*/
-//  delay(100);
+
+  delay(500);
     
 //  motorwrite(motor_angle, motor_angle_old);
   Motor.write(motor_angle);              // tell servo to go to position in variable 'pwm' 
@@ -84,12 +84,13 @@ void loop(){
   motor_angle_old = motor_angle;
   elevator_angle_old = elevator_angle;
   rudder_angle_old = rudder_angle;
-  
+ /* 
   while(1){
     if(readGPS()){
       break;
     }    
   }
+  */
   getTemp();
   sendInfo();
 
@@ -187,12 +188,13 @@ void motorwrite(int new_angle, int old_angle){
       }
       else{
         angle -= 5;
+        Serial.println(angle);
         Motor.write(angle);
       }
       delay(500);
     }
   }
-  
+/*  
   if (new_angle < old_angle){
     while (angle < old_angle){
       if ((old_angle - angle) < 5){
@@ -206,6 +208,7 @@ void motorwrite(int new_angle, int old_angle){
       delay(500);
     }
   }
+*/
 }
 
 int readGPS(){

@@ -3,7 +3,9 @@ import sensor
 
 #  the command is sent in the following format
 #  motor, elevator, rudder
-
+MAX = 180   #   servo and motor extremas
+MID = 90
+MIN = 0
 
 baudrate = 9600
 timeout = 2
@@ -12,7 +14,7 @@ class Submarine(object):
 	def __init__(self, serial):
 		self.serial = serial #  communication.serial object
 		self.sensor = sensor.Sensors(self.serial) #  sensor.sensor object
-		self.setAllControls(90, 90, 90) #  on startup all controls in middle
+		self.setAllControls(MID, MID, MID) #  on startup all controls in middle
 				
 	def sendCommand(self):
 		'''Sends the commands to arduino'''

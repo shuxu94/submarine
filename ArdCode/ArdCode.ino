@@ -69,12 +69,12 @@ void setup(){
 void loop(){ 
   serialDataIn = "";
   readfromPI();
-      
+/*      
   Serial.println(motor_angle);
   Serial.println(elevator_angle);
   Serial.println(rudder_angle);
-
-  delay(100);
+*/
+//  delay(100);
     
 //  motorwrite(motor_angle, motor_angle_old);
   Motor.write(motor_angle);              // tell servo to go to position in variable 'pwm' 
@@ -84,18 +84,17 @@ void loop(){
   motor_angle_old = motor_angle;
   elevator_angle_old = elevator_angle;
   rudder_angle_old = rudder_angle;
-/*   
+  
   while(1){
     if(readGPS()){
       break;
     }    
   }
-*/
   getTemp();
   sendInfo();
 
 
-//  if (Serial2.available()) Serial.write(Serial2.read());
+  if (Serial2.available()) Serial.write(Serial2.read());
 } 
 
 void readfromPI(){
@@ -314,9 +313,8 @@ int getTemp(){ //returns the temperature from one DS18S20 in DEG Celsius
 
 int sendInfo(){ // OUTPUTS: 0=GPSx, 1=GPSy, 2=compx, 3=compy, 4=compz, 5=temp
   char sendstr[1000];
-  sprintf(sendstr,"%s %s %s %s %s",GPSxstr,GPSystr,compXStr,compYStr,Tempstr);
-//  sprintf(sendstr,"%s",Tempstr);
+//  sprintf(sendstr,"%s %s %s %s %s",GPSxstr,GPSystr,compXStr,compYStr,Tempstr);
+  sprintf(sendstr,"%s %s %s",GPSxstr,GPSystr,Tempstr);
   Serial.println(sendstr);
 }
 
-//askdjfasjfbasdjhsadjfaskdf

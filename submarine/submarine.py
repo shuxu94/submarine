@@ -1,6 +1,5 @@
 import communication
 import sensor
-import autopilot
 
 #  the command is sent in the following format
 #  motor, elevator, rudder
@@ -13,7 +12,7 @@ class Submarine(object):
 	def __init__(self, serial):
 		self.serial = serial #  communication.serial object
 		self.sensor = sensor.Sensors(self.serial) #  sensor.sensor object
-		self.autopilot = autopilot.Autopilot(self)
+		self.setAllControls(90, 90, 90) #  on startup all controls in middle
 				
 	def sendCommand(self):
 		'''Sends the commands to arduino'''
@@ -24,6 +23,7 @@ class Submarine(object):
 												
 		self.serial.sendMessage(self.controlmessage)
 		
+
 	def setAllControls(self, motorsetting, elevatorsetting, ruddersetting):
 		'''Sets the all the controls'''
 		self.motorsetting = motorsetting	

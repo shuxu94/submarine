@@ -1,5 +1,6 @@
 import communication
 import sensor
+import autopilot
 
 #  the command is sent in the following format
 #  motor, elevator, rudder
@@ -8,11 +9,14 @@ import sensor
 baudrate = 9600
 timeout = 2
 class Submarine(object):
+	'''main object initiate this to start'''
 	def __init__(self, serial):
 		self.serial = serial #  communication.serial object
-		self.sensor = sensor.Sensors(self.serial) #  sensor.sensor object 
+		self.sensor = sensor.Sensors(self.serial) #  sensor.sensor object
+		self.autopilot = autopilot.Autopilot(self)
 				
 	def sendCommand(self):
+		'''Sends the commands to arduino'''
 		self.controlmessage = "%d,%d,%d\n" % (
 												self.motorsetting,
 												self.elevatorsetting,
@@ -21,6 +25,7 @@ class Submarine(object):
 		self.serial.sendMessage(self.controlmessage)
 		
 	def setAllControls(self, motorsetting, elevatorsetting, ruddersetting):
+		'''Sets the all the controls'''
 		self.motorsetting = motorsetting	
 		self.elevatorsetting = elevatorsetting
 		self.ruddersetting = ruddersetting

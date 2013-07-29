@@ -89,6 +89,7 @@ class Compsocket(socket.socket):
 		return self.addr
 		
 class Serial(object):
+	'''Serial object connecting pi to arduino'''
 	def __init__(self, devicepath, brate, tout):
 		self.Serial = serial.Serial(devicepath, baudrate = brate, timeout = tout)
 

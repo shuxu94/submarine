@@ -12,6 +12,9 @@ class Sensors(object):
 										float(self.data[1]))
 		self.currentHeading  = float(self.data[2])
 		self.currentTemp     = float(self.data[3])
+		self.currentSpeed    = float(self.data[4])
+	def geLatestSpeed(self):
+		return self.currentSpeed
 		
 	def getLatestLocation(self):
 		return self.currentLocation
@@ -24,10 +27,6 @@ class Sensors(object):
 	
 class GPScoord(object):
 	def __init__(self, x, y):
-		self.x = x
-		self.y = y
-class Compass(object):
-	def __init__(self, x,y):
 		self.x = x
 		self.y = y
 

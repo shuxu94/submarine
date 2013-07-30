@@ -1,5 +1,6 @@
 import communication
 import sensor
+import navigation
 
 #  the command is sent in the following format
 #  motor, elevator, rudder
@@ -15,7 +16,18 @@ class Submarine(object):
 		self.serial = serial #  communication.serial object
 		self.sensor = sensor.Sensors(self.serial) #  sensor.sensor object
 		self.setAllControls(MID, MID, MID) #  on startup all controls in middle
-				
+		
+	def setCourse(self, desx, desy):
+		self.desx = desx
+		self.desy = desy		
+		course = navigation.Course(self.desx, self.desy)
+		self.sensor.getData()
+		course.setStart(self.sensor.currentLocation.x
+						self.sensor.currentLocation.y)
+
+		
+		
+#  below is the control settings				
 	def sendCommand(self):
 		'''Sends the commands to arduino'''
 		self.controlmessage = "%d,%d,%d\n" % (

@@ -1,6 +1,7 @@
 import communication
 import sensor
 import navigation
+import autopilot
 
 #  the command is sent in the following format
 #  motor, elevator, rudder
@@ -16,6 +17,11 @@ class Submarine(object):
 		self.serial = serial #  communication.serial object
 		self.sensor = sensor.Sensors(self.serial) #  sensor.sensor object
 		self.setAllControls(MID, MID, MID) #  on startup all controls in middle
+
+
+	def updateStart(self):
+		course.setStart(self.sensor.currentLocation.x
+						self.sensor.currentLocation.y)
 		
 	def setCourse(self, desx, desy):
 		self.desx = desx
@@ -24,6 +30,9 @@ class Submarine(object):
 		self.sensor.getData()
 		course.setStart(self.sensor.currentLocation.x
 						self.sensor.currentLocation.y)
+				
+	def startCourse(self):
+																																			`			
 
 		
 		

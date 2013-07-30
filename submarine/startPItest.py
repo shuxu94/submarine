@@ -25,6 +25,7 @@ except (KeyboardInterrupt, SystemExit):
 	print '\n! Received keyboard interrupt, quitting threads.\n'
 
 while 1:
+	print serial.getMessage()
 	if controlReciever.message == None:
 		continue
 	if controlReciever.message == oldmessage:

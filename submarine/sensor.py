@@ -6,7 +6,7 @@ class Sensors(object):
 		self.serial = serial
 
 	def getData(self):
-		self.data = self.serial.getMessage().split
+		self.data = self.serial.getMessage().split()
 
 		self.currentLocation = GPScoord(float(self.data[0]), 
 										float(self.data[1]))
@@ -14,15 +14,19 @@ class Sensors(object):
 		self.currentTemp     = float(self.data[3])
 		self.currentSpeed    = float(self.data[4])
 	def geLatestSpeed(self):
+		self.getData()
 		return self.currentSpeed
 		
 	def getLatestLocation(self):
+		self.getData()
 		return self.currentLocation
 	
 	def getLatestHeading(self):
+		self.getData()
 		return self.currentHeading
 	
 	def getLatestTemp(self):
+		self.getData()
 		return self.currentTemp
 	
 class GPScoord(object):

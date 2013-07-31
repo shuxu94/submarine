@@ -97,22 +97,24 @@ class Serial(object):
 		if tout == None: #  if no tout is selected
 			stop = time.time()+3 #  used as a timer
 			while time.time() < stop:
-				data = self.Serial.realline()
+				msg = self.Serial.readline()
+				data = msg
+				data = data.split()
 				if len(data) == 5: #  makes sure that all the data
-								   #  is received.
-					return data
+					return msg
 		elif tout != None: #  if tout is selected
 			stop = time.time()+tout
 			while time.time() < stop:
-				data = self.Serial.realline()
+				data = self.Serial.readline()
+				data = data.split()
 				if len(data) == 5:
 					return data
 				
 	def sendMessage(self, message):
 		self.Serial.write(message)
 
-	def getMessage(self):
-		return self.Serial.readline() #chang it to a serial subclass
+# 	def getMessage(self):
+# 		return self.Serial.readline() #chang it to a serial subclass
 
 def main(): #  test client
 	pass #  this test client will only run when connected

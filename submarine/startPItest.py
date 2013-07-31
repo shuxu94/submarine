@@ -25,9 +25,11 @@ except (KeyboardInterrupt, SystemExit):
 	print '\n! Received keyboard interrupt, quitting threads.\n'
 
 while 1:
+	temp = sub1.sensor.getLatestTemp()
+	print temp
 	if controlReciever.message == None:
 		continue
-	if controlReciever.message == oldmessage:
+	elif controlReciever.message == oldmessage:
 		continue
 	else:
 		message = controlReciever.message

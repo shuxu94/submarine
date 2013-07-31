@@ -1,21 +1,23 @@
-import thread.Treading
+import threading
 
 
 MAX = 180
 MID = 90
 MIN = 0
 
-class Autopilot(thread.Threading):
+class Autopilot(threading.Thread):
 	def __init__(self):
 		pass
 	
 	def run(self):
+		pass
 		
 	
 	def addSub(self, submarine):
 		self.submarine = submarine
 	
 	def goHere(self, x, y, speed):
+		pass
 		
 	
 	
@@ -24,7 +26,7 @@ class Autopilot(thread.Threading):
 		self.targetSpeed = speed
 		self.currentSpeed = sensor.getCurrentSpeed
 		
-		if self.currentSpeed = self.targetSpeed:
+		if self.currentSpeed == self.targetSpeed:
 			pass
 		elif self.currentSpeed > self.targetSpeed:
 			difference = math.fabs(self.currentSpeed - self.targetSpeed)

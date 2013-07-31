@@ -29,7 +29,7 @@ while 1:
 	print data
 	if controlReciever.message == None:
 		continue
-	if controlReciever.message == oldmessage:
+	elif controlReciever.message == oldmessage:
 		continue
 	else:
 		message = controlReciever.message

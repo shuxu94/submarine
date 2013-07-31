@@ -98,7 +98,7 @@ class Serial(object):
 			stop = time.time()+3 #  used as a timer
 			while time.time() < stop:
 				data = self.Serial.readline()
-				data = data.split
+				data = data.split()
 				if len(data) == 5: #  makes sure that all the data
 								   #  is received.
 					return data

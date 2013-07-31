@@ -26,6 +26,7 @@ except (KeyboardInterrupt, SystemExit):
 
 while 1:
 	data = serial.getMessage()
+	data.split()
 	print data
 	if controlReciever.message == None:
 		continue

@@ -28,15 +28,12 @@ class Submarine(object):
 		self.desy = desy		
 		course = navigation.Course(self.desx, self.desy)
 		self.sensor.getData()
-		course.setStart(self.sensor.currentLocation.x
+		course.setStart(self.sensor.currentLocation.x,
 						self.sensor.currentLocation.y)
 				
 	def startCourse(self):
 		pass
-																																			`			
 
-		
-		
 #  below is the control settings				
 	def sendCommand(self):
 		'''Sends the commands to arduino'''

@@ -4,11 +4,13 @@
 #include <OneWire.h> // temperature sensor
 #include <stdlib.h>
 #include <math.h>
+#include <Scheduler.h>
 
 NMEA GPS(GPRMC);
 double GPSx,GPSy,Temp,Heading;
 char compXStr [100];
 char compYStr [100];
+char GPSspeedstr [100];
 char GPSxstr [100];
 char GPSystr [100];
 char Tempstr [100];
@@ -60,6 +62,8 @@ void setup(){
 //  counter = 0;
   serialDataIn = "";
   
+//  Scheduler.startLoop(
+  
   Motor.attach(11);
   Rudder.attach(9);
   Elevator.attach(10);
@@ -74,7 +78,7 @@ void loop(){
   Serial.println(elevator_angle);
   Serial.println(rudder_angle);
 
-  delay(500);
+//  delay(500);
     
 //  motorwrite(motor_angle, motor_angle_old);
   Motor.write(motor_angle);              // tell servo to go to position in variable 'pwm' 
@@ -218,6 +222,7 @@ int readGPS(){
       if(GPS.gprmc_status()=='A'){
         GPSx=double(GPS.gprmc_latitude());
         GPSy=double(GPS.gprmc_longitude());
+        GPSspeed=double(GPS.gprmc_speed());
         Heading=double(GPS.gprmc_course())*PI/180;
         dtostrf(GPSx,20,10,GPSxstr);
         dtostrf(GPSy,20,10,GPSystr);
@@ -317,7 +322,7 @@ int getTemp(){ //returns the temperature from one DS18S20 in DEG Celsius
 int sendInfo(){ // OUTPUTS: 0=GPSx, 1=GPSy, 2=compx, 3=compy, 4=compz, 5=temp
   char sendstr[1000];
 //  sprintf(sendstr,"%s %s %s %s %s",GPSxstr,GPSystr,compXStr,compYStr,Tempstr);
-  sprintf(sendstr,"%s %s %s",GPSxstr,GPSystr,Tempstr);
+  sprintf(sendstr,"%s %s %s %s",GPSxstr,GPSystr,Tempstr);
   Serial.println(sendstr);
 }
 

@@ -111,8 +111,8 @@ class Serial(object):
 	def sendMessage(self, message):
 		self.Serial.write(message)
 
-	def getMessage(self):
-		return self.Serial.readline() #chang it to a serial subclass
+# 	def getMessage(self):
+# 		return self.Serial.readline() #chang it to a serial subclass
 
 def main(): #  test client
 	pass #  this test client will only run when connected

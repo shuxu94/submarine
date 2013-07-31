@@ -20,7 +20,7 @@ class Submarine(object):
 
 
 	def updateStart(self):
-		course.setStart(self.sensor.currentLocation.x
+		course.setStart(self.sensor.currentLocation.x,
 						self.sensor.currentLocation.y)
 		
 	def setCourse(self, desx, desy):

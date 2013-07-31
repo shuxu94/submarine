@@ -7,7 +7,7 @@
 #include <Scheduler.h>
 
 NMEA GPS(GPRMC);
-double GPSx,GPSy,Temp,Heading;
+double GPSx,GPSy,GPSspeed,Temp,Heading;
 char compXStr [100];
 char compYStr [100];
 char GPSspeedstr [100];
@@ -59,11 +59,11 @@ Servo Elevator;
 void setup(){
   Serial.begin(9600); // PI
   Serial2.begin(4800); //gps
-//  counter = 0;
+  //  counter = 0;
   serialDataIn = "";
-  
-//  Scheduler.startLoop(
-  
+
+  //  Scheduler.startLoop(sendInfo();
+
   Motor.attach(11);
   Rudder.attach(9);
   Elevator.attach(10);
@@ -73,14 +73,14 @@ void setup(){
 void loop(){ 
   serialDataIn = "";
   readfromPI();
-      
+/*
   Serial.println(motor_angle);
   Serial.println(elevator_angle);
   Serial.println(rudder_angle);
+*/
+  //  delay(500);
 
-//  delay(500);
-    
-//  motorwrite(motor_angle, motor_angle_old);
+  //  motorwrite(motor_angle, motor_angle_old);
   Motor.write(motor_angle);              // tell servo to go to position in variable 'pwm' 
   Elevator.write(elevator_angle);
   Rudder.write(rudder_angle);
@@ -88,13 +88,13 @@ void loop(){
   motor_angle_old = motor_angle;
   elevator_angle_old = elevator_angle;
   rudder_angle_old = rudder_angle;
- /* 
-  while(1){
-    if(readGPS()){
-      break;
-    }    
-  }
-  */
+  /* 
+   while(1){
+   if(readGPS()){
+   break;
+   }    
+   }
+   */
   getTemp();
   sendInfo();
 
@@ -103,83 +103,83 @@ void loop(){
 } 
 
 void readfromPI(){
-/*    inbyte = Serial.read();
-    if(inbyte >= '0' & inbyte <= '9')
-      serialDataIn += char(inbyte);
-    if (inbyte == ','){  // Handle delimiter
-      data[counter] = String(serialDataIn);
-      serialDataIn = String("");
-      counter = counter + 1;
-    }
+  /*    inbyte = Serial.read();
+   if(inbyte >= '0' & inbyte <= '9')
+   serialDataIn += char(inbyte);
+   if (inbyte == ','){  // Handle delimiter
+   data[counter] = String(serialDataIn);
+   serialDataIn = String("");
+   counter = counter + 1;
+   }
+   
+   if(inbyte ==  '\r'){  // end of line
+   motor_pwm= data[0].toInt();
+   elevator_pwm= data[1].toInt();
+   rudder_pwm = data[2].toInt();
+   }
+   */
+  // takes in the input from serial and converts to string
+  while(Serial.available()){
+    serialInput = Serial.read();
+    serialDataIn.concat(serialInput);
+  }
+  //    Serial.println(serialDataIn);
 
-      if(inbyte ==  '\r'){  // end of line
-      motor_pwm= data[0].toInt();
-      elevator_pwm= data[1].toInt();
-      rudder_pwm = data[2].toInt();
-    }
-*/
-    // takes in the input from serial and converts to string
-    while(Serial.available()){
-       serialInput = Serial.read();
-       serialDataIn.concat(serialInput);
-    }
-//    Serial.println(serialDataIn);
+  // printing out the string that has been received from serial in the format #,#,#
+  /*    if (serialDataIn != ""){
+   Serial.println(serialDataIn);
+   }
+   */
+  int commaIndex = serialDataIn.indexOf(',');
+  int secondCommaIndex = serialDataIn.indexOf(',', commaIndex+1);
 
-    // printing out the string that has been received from serial in the format #,#,#
-/*    if (serialDataIn != ""){
-        Serial.println(serialDataIn);
+  String motorangle = serialDataIn.substring(0, commaIndex);
+  String elevatorangle = serialDataIn.substring(commaIndex+1, secondCommaIndex);
+  String rudderangle = serialDataIn.substring(secondCommaIndex+1);
+
+  motor_angle= motorangle.toInt();
+  elevator_angle= elevatorangle.toInt();
+  rudder_angle = rudderangle.toInt();     
+
+
+  // if there is no new input (aka inputs are 0), then go back to old input
+  // if pwm is less than min or more than max, value will be changed to either min or max
+  if(motor_angle == 0){
+    motor_angle = motor_angle_old;
+  }
+  else{
+    if(motor_angle <= MINANGLE){
+      motor_angle = MINANGLE;
+    }       
+    if(motor_angle >= MAXANGLE){
+      motor_angle = MAXANGLE;
     }
-*/
-    int commaIndex = serialDataIn.indexOf(',');
-    int secondCommaIndex = serialDataIn.indexOf(',', commaIndex+1);
-    
-    String motorangle = serialDataIn.substring(0, commaIndex);
-    String elevatorangle = serialDataIn.substring(commaIndex+1, secondCommaIndex);
-    String rudderangle = serialDataIn.substring(secondCommaIndex+1);
-    
-     motor_angle= motorangle.toInt();
-     elevator_angle= elevatorangle.toInt();
-     rudder_angle = rudderangle.toInt();     
-     
-     
-     // if there is no new input (aka inputs are 0), then go back to old input
-     // if pwm is less than min or more than max, value will be changed to either min or max
-     if(motor_angle == 0){
-       motor_angle = motor_angle_old;
-     }
-     else{
-       if(motor_angle <= MINANGLE){
-         motor_angle = MINANGLE;
-       }       
-       if(motor_angle >= MAXANGLE){
-         motor_angle = MAXANGLE;
-       }
-     }
-     
-     if(elevator_angle == 0){
-       elevator_angle = elevator_angle_old;
-     }
-     else{
-       if(elevator_angle <= MINANGLE){
-         elevator_angle = MINANGLE;
-       }
-       if(elevator_angle >= MAXANGLE){
-         elevator_angle = MAXANGLE;
-       }
-     }
-     
-     if(rudder_angle == 0){
-       rudder_angle = rudder_angle_old;
-     }
-     else{
-       if(rudder_angle <= MINANGLE){
-         rudder_angle = MINANGLE;
-       }
-       if(rudder_angle >= MAXANGLE){
-         rudder_angle = MAXANGLE;
-       }
-     }
-     
+  }
+
+  if(elevator_angle == 0){
+    elevator_angle = elevator_angle_old;
+  }
+  else{
+    if(elevator_angle <= MINANGLE){
+      elevator_angle = MINANGLE;
+    }
+    if(elevator_angle >= MAXANGLE){
+      elevator_angle = MAXANGLE;
+    }
+  }
+
+  if(rudder_angle == 0){
+    rudder_angle = rudder_angle_old;
+  }
+  else{
+    if(rudder_angle <= MINANGLE){
+      rudder_angle = MINANGLE;
+    }
+    if(rudder_angle >= MAXANGLE){
+      rudder_angle = MAXANGLE;
+    }
+  }
+
 }
 
 void motorwrite(int new_angle, int old_angle){
@@ -198,21 +198,21 @@ void motorwrite(int new_angle, int old_angle){
       delay(500);
     }
   }
-/*  
-  if (new_angle < old_angle){
-    while (angle < old_angle){
-      if ((old_angle - angle) < 5){
-        Motor.write(new_angle);
-        return;
-      }
-      else{
-        angle += 5;
-        Motor.write(angle);
-      }
-      delay(500);
-    }
-  }
-*/
+  /*  
+   if (new_angle < old_angle){
+   while (angle < old_angle){
+   if ((old_angle - angle) < 5){
+   Motor.write(new_angle);
+   return;
+   }
+   else{
+   angle += 5;
+   Motor.write(angle);
+   }
+   delay(500);
+   }
+   }
+   */
 }
 
 int readGPS(){
@@ -222,10 +222,11 @@ int readGPS(){
       if(GPS.gprmc_status()=='A'){
         GPSx=double(GPS.gprmc_latitude());
         GPSy=double(GPS.gprmc_longitude());
-        GPSspeed=double(GPS.gprmc_speed());
+        GPSspeed=double(GPS.gprmc_speed(MPS));
         Heading=double(GPS.gprmc_course())*PI/180;
         dtostrf(GPSx,20,10,GPSxstr);
         dtostrf(GPSy,20,10,GPSystr);
+        dtostrf(GPSspeed,20,10,GPSspeedstr);
         dtostrf(Heading,20,10,Headingstr);
       }
       return 1;
@@ -281,8 +282,8 @@ int readCompass(int outputMode){
     i++;
   }
 
-int  magReading = magData[0]*256 + magData[1];
-return magReading;
+  int  magReading = magData[0]*256 + magData[1];
+  return magReading;
 }
 
 int getTemp(){ //returns the temperature from one DS18S20 in DEG Celsius
@@ -321,8 +322,24 @@ int getTemp(){ //returns the temperature from one DS18S20 in DEG Celsius
 
 int sendInfo(){ // OUTPUTS: 0=GPSx, 1=GPSy, 2=compx, 3=compy, 4=compz, 5=temp
   char sendstr[1000];
-//  sprintf(sendstr,"%s %s %s %s %s",GPSxstr,GPSystr,compXStr,compYStr,Tempstr);
-  sprintf(sendstr,"%s %s %s %s",GPSxstr,GPSystr,Tempstr);
+  //  sprintf(sendstr,"%s %s %s %s %s",GPSxstr,GPSystr,compXStr,compYStr,Tempstr);
+
+  if (GPSxstr == NULL){
+    GPSxstr[0] = '0';
+  }
+  if (GPSystr == ""){
+    GPSystr[0] = '0';
+  }
+  if (GPSspeedstr == ""){
+    GPSspeedstr[0] = '0';
+  }
+
+//  GPSxstr[0] = '2';
+//  GPSystr[0] = '2';
+//  GPSspeedstr[0] = '2';
+  compXStr[0] = '2';
+  
+  sprintf(sendstr,"%s %s %s %s %s",GPSxstr,GPSystr,GPSspeedstr,compXStr,Tempstr);
   Serial.println(sendstr);
 }
 

@@ -6,7 +6,7 @@ class Sensors(object):
 		self.serial = serial
 
 	def getData(self):
-		self.data = self.serial.getMessage()
+		self.data = self.serial.getMessage().split()
 
 		self.currentLocation = GPScoord(float(self.data[0]), 
 										float(self.data[1]))

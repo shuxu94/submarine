@@ -55,14 +55,16 @@ Servo Motor;
 Servo Rudder;
 Servo Elevator;
 
+long receiveInterval = 100; // interval between which Arduino checks for new inputs for the servos
+long receiveCounter = 0; // time since last receive
+long sendInterval = 1000; // interval for sending information
+long sendCounter = 0; // time since last send
 
 void setup(){
   Serial.begin(9600); // PI
   Serial2.begin(4800); //gps
   //  counter = 0;
   serialDataIn = "";
-
-  //  Scheduler.startLoop(sendInfo();
 
   Motor.attach(11);
   Rudder.attach(9);
@@ -71,34 +73,39 @@ void setup(){
 
 
 void loop(){ 
-  serialDataIn = "";
-  readfromPI();
-/*
-  Serial.println(motor_angle);
-  Serial.println(elevator_angle);
-  Serial.println(rudder_angle);
-*/
-  //  delay(500);
+  if(millis() - receiveCounter > receiveInterval){
+    receiveCounter = millis();
+    serialDataIn = "";
+    readfromPI();
 
-  //  motorwrite(motor_angle, motor_angle_old);
-  Motor.write(motor_angle);              // tell servo to go to position in variable 'pwm' 
-  Elevator.write(elevator_angle);
-  Rudder.write(rudder_angle);
+    Serial.println(motor_angle);
+    Serial.println(elevator_angle);
+    Serial.println(rudder_angle);
 
-  motor_angle_old = motor_angle;
-  elevator_angle_old = elevator_angle;
-  rudder_angle_old = rudder_angle;
-  /* 
-   while(1){
-   if(readGPS()){
-   break;
-   }    
-   }
+    //  delay(500);
+
+    //  motorwrite(motor_angle, motor_angle_old);
+    Motor.write(motor_angle);              // tell servo to go to position in variable 'pwm' 
+    Elevator.write(elevator_angle);
+    Rudder.write(rudder_angle);
+
+    motor_angle_old = motor_angle;
+    elevator_angle_old = elevator_angle;
+    rudder_angle_old = rudder_angle;
+  }
+  
+  if(millis() - sendCounter > sendInterval){
+    sendCounter = millis();
+    /* 
+     while(1){
+       if(readGPS()){
+         break;
+       }    
+     }
    */
-  getTemp();
-  sendInfo();
-
-
+    getTemp();
+    sendInfo();
+  }
   if (Serial2.available()) Serial.write(Serial2.read());
 } 
 
@@ -323,7 +330,7 @@ int getTemp(){ //returns the temperature from one DS18S20 in DEG Celsius
 int sendInfo(){ // OUTPUTS: 0=GPSx, 1=GPSy, 2=compx, 3=compy, 4=compz, 5=temp
   char sendstr[1000];
   //  sprintf(sendstr,"%s %s %s %s %s",GPSxstr,GPSystr,compXStr,compYStr,Tempstr);
-
+/*
   if (GPSxstr == NULL){
     GPSxstr[0] = '0';
   }
@@ -333,11 +340,11 @@ int sendInfo(){ // OUTPUTS: 0=GPSx, 1=GPSy, 2=compx, 3=compy, 4=compz, 5=temp
   if (GPSspeedstr == ""){
     GPSspeedstr[0] = '0';
   }
-
+*/
 //  GPSxstr[0] = '2';
 //  GPSystr[0] = '2';
 //  GPSspeedstr[0] = '2';
-  compXStr[0] = '2';
+//  compXStr[0] = '2';
   
   sprintf(sendstr,"%s %s %s %s %s",GPSxstr,GPSystr,GPSspeedstr,compXStr,Tempstr);
   Serial.println(sendstr);

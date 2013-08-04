@@ -9,7 +9,8 @@ import sys
 
 #  Sensor data coming in in the following form:
 #  x-coordinate, y-coordinate, compassx, compassy, temperature
-class ListeningThread(threading.Thread):#  This is used to listen for messages
+class ListeningThread(threading.Thread):
+	'''general thread for communication'''#  This is used to listen for messages
 	def __init__(self, Commsocket):
 		threading.Thread.__init__(self)
 		self.socket = Commsocket

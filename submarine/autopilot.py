@@ -1,5 +1,5 @@
 import threading
-
+import navigation
 
 MAX = 180
 MID = 90
@@ -17,7 +17,9 @@ class Autopilot(threading.Thread):
 		self.submarine = submarine
 	
 	def goHere(self, x, y, speed):
-		pass
+		self.desx = x
+		self.desy = y
+		course = navigation.Course(self.desx, self.desy)
 		
 	
 	

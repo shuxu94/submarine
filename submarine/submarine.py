@@ -32,7 +32,7 @@ class Submarine(object):
 						self.sensor.currentLocation.y)
 				
 	def startCourse(self):
-		pass
+		
 
 #  below is the control settings				
 	def sendCommand(self):

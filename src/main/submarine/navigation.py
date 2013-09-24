@@ -8,7 +8,7 @@ class Course(object):
 		self.starty = starty
 	
 	def distanceOffCourse(self, currentx, currenty):
-	''' uses linear algebra to calculate'''
+	''' uses linear algebra to calculate distance off course'''
 		#  using the projection forumla to find the distance
 		#  away from the intended course
 		self.desx = desx - self.startx

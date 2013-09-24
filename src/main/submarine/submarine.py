@@ -12,6 +12,7 @@ MIN = 0
 baudrate = 9600
 timeout = 2
 class Submarine(object):
+#  utilizing the nav modules
 	'''main object initiate this to start'''
 	def __init__(self, serial):
 		self.serial = serial #  communication.serial object
@@ -32,9 +33,13 @@ class Submarine(object):
 						self.sensor.currentLocation.y)
 				
 	def startCourse(self):
+		pass
+		
+	def isCourseFinished(self):
+		pass
 		
 
-#  below is the control settings				
+#  below is the motor and servo settings				
 	def sendCommand(self):
 		'''Sends the commands to arduino'''
 		self.controlmessage = "%d,%d,%d\n" % (

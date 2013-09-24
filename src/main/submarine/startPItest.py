@@ -36,3 +36,26 @@ while 1:
 		print message
 		sub1.serial.sendMessage(message)
 		oldmessage = message
+
+#  sub1.setCourse(xcoord, ycoord)
+#  sub1.startCourse()
+#  if sub1.isCourseFinished == true
+#  sub1.setCourse(xcoord2, ycoord2)
+
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
